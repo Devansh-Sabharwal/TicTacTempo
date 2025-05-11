@@ -23,6 +23,7 @@ export default function TicTacToeGame() {
   const [isDraw, setIsDraw] = useState(false);
   const [opponentLeft, setOpponentLeft] = useState(false);
   const [lastMove, setLastMove] = useState<number | null>(null);
+  const [fadeIndex, setFadeIndex] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
   
@@ -57,6 +58,7 @@ export default function TicTacToeGame() {
       setBoard(data.board);
       setLastMove(data.lastMove);
       setIsMyTurn(data.isMyTurn);
+      setFadeIndex(data.fadeIndex);
     };
 
     gameObj.onGameStart = (data) => {
@@ -157,55 +159,70 @@ export default function TicTacToeGame() {
     setTimeout(() => setErrorMessage(''), 3000);
   };
 
-  return (
-    <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">Multiplayer Tic Tac Toe</h1>
+  return <div className="bg-gradient-to-r from-purple-500 to-pink-500 max-w-md mx-auto p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] overflow-hidden relative animate-fade-in">
+      {/* Decorative elements */}
+      <div className="absolute top-0 left-0 w-full h-full bg-white/10 backdrop-blur-[1px] z-0"></div>
+      <div className="absolute -top-24 -left-24 w-48 h-48 bg-yellow-300/20 rounded-full blur-3xl"></div>
+      <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-blue-300/20 rounded-full blur-3xl"></div>
       
-      {!roomId ? (
-        <GameControls
-          connected={connected}
-          inputRoomId={inputRoomId}
-          onCreateRoom={handleCreateRoom}
-          onJoinRoom={handleJoinRoom}
-          onInputChange={(e) => setInputRoomId(e.target.value.toUpperCase())}
-        />
-      ) : (
-        <>
-          <GameStatus
-            roomId={roomId}
-            playerSymbol={playerSymbol}
-            status={{
-              connected,
-              waitingForOpponent,
-              gameOver,
-              isDraw,
-              opponentLeft,
-              winner,
-              gameStarted,
-              isMyTurn,
-            }}
-            onCopyRoomId={copyRoomIdToClipboard}
+      {/* Content container */}
+      <div className="relative z-10 flex flex-col items-center">
+        {/* Title with decorative elements */}
+        <div className="relative mb-8 w-full">
+          <h1 className="text-3xl font-extrabold text-white text-center tracking-wide drop-shadow-md">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-pink-100">
+              Tic Tac Tempo
+            </span>
+          </h1>
+          <div className="h-1 w-24 bg-gradient-to-r from-yellow-300 to-pink-300 rounded-full mx-auto mt-2"></div>
+        </div>
+
+        {!roomId ? (
+          <GameControls
+            connected={connected}
+            inputRoomId={inputRoomId}
+            onCreateRoom={handleCreateRoom}
+            onJoinRoom={handleJoinRoom}
+            onInputChange={(e) => setInputRoomId(e.target.value.toUpperCase())}
           />
-          
-          <Board
-            board={board}
-            winningLine={winningLine}
-            lastMove={lastMove}
-            onCellClick={handleCellClick}
-          />
-          
-          {gameOver && (
-            <button
-              onClick={handleRestartGame}
-              className="w-full mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition-colors"
-            >
-              Play Again
-            </button>
-          )}
-        </>
-      )}
-      
-      <ErrorMessage message={errorMessage} />
+        ) : (
+          <>
+            <GameStatus
+              roomId={roomId}
+              playerSymbol={playerSymbol}
+              status={{
+                connected,
+                waitingForOpponent,
+                gameOver,
+                isDraw,
+                opponentLeft,
+                winner,
+                gameStarted,
+                isMyTurn,
+              }}
+              onCopyRoomId={copyRoomIdToClipboard}
+            />
+
+            <Board
+              board={board}
+              winningLine={winningLine}
+              lastMove={lastMove}
+              fadeIndex={fadeIndex}
+              onCellClick={handleCellClick}
+            />
+
+            {gameOver && (
+              <button
+                onClick={handleRestartGame}
+                className="w-full mt-6 bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Play Again
+              </button>
+            )}
+          </>
+        )}
+
+        <ErrorMessage message={errorMessage} />
+      </div>
     </div>
-  );
 }

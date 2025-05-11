@@ -13,6 +13,7 @@ export default class Game {
     public winningLine:string[]|null;
     public isDraw:boolean;
     public opponentLeft;
+    public fadeIndex:number|null;
 
     public onBoardUpdate:((data:any)=>void)|null;
     public onGameStart:((data: { board: any[]; isMyTurn: boolean }) => void)|null;
@@ -27,6 +28,7 @@ export default class Game {
     
     // Game state
     this.roomId = null;
+    this.fadeIndex = null;
     this.playerSymbol = null;
     this.board = Array(9).fill(null);
     this.isMyTurn = false;
@@ -101,7 +103,8 @@ export default class Game {
             board: this.board,
             lastMove: data.position,
             lastSymbol: data.symbol,
-            isMyTurn: this.isMyTurn
+            isMyTurn: this.isMyTurn,
+            fadeIndex: data.fadePosition
           });
         }
       });
