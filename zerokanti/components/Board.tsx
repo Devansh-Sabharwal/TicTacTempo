@@ -19,13 +19,20 @@ const GameBoard: React.FC<GameBoardProps> = ({
   disabled = false
 }) => {
   const getCellClasses = (index: number) => {
+    const isFade = index === fadeIndex;
+    const value = board[index];
+    const animationClass = value && !isFade ? 'animate-cell-appear' : '';
+    
     let classes = [
-      'h-24 w-24', // Size
+      'bg-emerald-800/40',
+      'm-1.5 border border-emerald-300/20',
+      'h-32 w-32', // Size
       'flex items-center justify-center', // Layout
-      'text-4xl font-bold', // Text
-      'border-2 rounded-lg', // Border
+      'text-5xl font-bold', // Text
+      'rounded-xl',
       'transition-all duration-200', // Animation
-      'cursor-pointer' // Interaction
+      'cursor-pointer', // Interaction
+      animationClass
     ];
 
     if (disabled) {
@@ -33,25 +40,32 @@ const GameBoard: React.FC<GameBoardProps> = ({
     }
 
     if (winningLine?.includes(index)) {
-      classes.push('bg-green-100 border-green-500 shadow-md');
+      classes.push('bg-emerald-500/60 shadow-md animate-winning-pulse');
     } else if (lastMove === index) {
       classes.push('bg-blue-50 border-blue-300');
-    } else {
-      classes.push('border-gray-300 hover:bg-gray-50');
     }
 
     return classes.join(' ');
   };
 
   const getSymbolClasses = (symbol: string | null,index:number) => {
-    if (!symbol) return '';
-    if(index==fadeIndex) return symbol === 'X' ? 'text-red-300' : 'text-blue-300';
-    return symbol === 'X' ? 'text-red-500' : 'text-blue-500';
+    const isFade = index === fadeIndex;
+    const value = board[index];
+    const textColor = value === 'O'
+    ? isFade
+      ? 'text-teal-200/15'    
+      : 'text-teal-300'      
+    : value === 'X'
+      ? isFade
+        ? 'text-green-200/30'    
+        : 'text-green-300'       
+      : '';
+    return textColor;
   };
 
   return (
     <div 
-      className="grid grid-cols-3 gap-2 my-6"
+      className="grid grid-cols-3  bg-emerald-900/70 rounded-2xl sm:p-4"
       data-testid="game-board"
     >
       {board.map((cell, index) => (

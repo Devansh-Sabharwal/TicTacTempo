@@ -1,5 +1,5 @@
-// components/GameStatus.tsx
 import React from 'react';
+import { Copy, Crown, Clock, AlertCircle } from 'lucide-react';
 
 interface GameStatusProps {
   roomId: string;
@@ -25,52 +25,72 @@ const GameStatus: React.FC<GameStatusProps> = ({
 }) => {
   const getStatusColor = () => {
     if (status.gameOver) {
-      if (status.isDraw) return 'text-yellow-600 bg-yellow-50';
-      if (status.winner === playerSymbol) return 'text-green-600 bg-green-50';
-      return 'text-red-600 bg-red-50';
+      if (status.isDraw) return 'bg-yellow-500/10 text-yellow-300';
+      if (status.winner === playerSymbol) return 'bg-emerald-500/10 text-emerald-300';
+      return 'bg-red-500/10 text-red-300';
     }
-    return status.isMyTurn ? 'text-blue-600 bg-blue-50' : 'text-gray-600 bg-gray-50';
+    return status.isMyTurn ? 'bg-emerald-500/10 text-emerald-300' : 'bg-emerald-900/50 text-emerald-200';
   };
 
   const getStatusMessage = () => {
     if (!status.connected) return 'Connecting to server...';
     if (status.waitingForOpponent) return 'Waiting for opponent to join...';
     if (status.gameOver) {
-      if (status.isDraw) return "Game ended in a draw!";
       if (status.opponentLeft) return 'Opponent left the game';
-      if (status.winner === playerSymbol) return 'You won! 🎉';
-      return 'You lost!';
+      if (status.winner === playerSymbol) return 'Victory! 🎉';
+      return 'Better luck next time!';
     }
     if (status.gameStarted) return status.isMyTurn ? 'Your turn' : "Opponent's turn";
-    return 'Start or join a game';
+    return 'Ready to play';
+  };
+
+  const getStatusIcon = () => {
+    if (status.gameOver) {
+      if (status.isDraw) return <AlertCircle className="w-5 h-5" />;
+      if (status.winner === playerSymbol) return <Crown className="w-5 h-5" />;
+      return <AlertCircle className="w-5 h-5" />;
+    }
+    return <Clock className="w-5 h-5" />;
   };
 
   return (
-    <div className="space-y-3 mb-4">
+    <div className="space-y-4 animate-fade-in">
       {roomId && (
-        <div className="flex justify-between items-center bg-gray-100 p-3 rounded-lg">
-          <span className="font-medium truncate">Room: {roomId}</span>
+        <div className="bg-emerald-900/30 backdrop-blur-sm border border-emerald-800/50 rounded-xl p-4 flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <span className="text-emerald-200">Room:</span>
+            <span className="font-medium text-white">{roomId}</span>
+          </div>
           <button
             onClick={onCopyRoomId}
-            className="text-sm bg-white hover:bg-gray-200 px-3 py-1 rounded-md transition-colors shadow-sm"
-            aria-label="Copy room ID"
+            className="flex items-center gap-2 px-3 py-1.5 bg-emerald-800/30 hover:bg-emerald-700/30 rounded-lg transition-colors text-emerald-300 hover:text-emerald-200"
           >
-            Copy
+            <Copy className="w-4 h-4" />
+            <span className="text-sm">Copy</span>
           </button>
         </div>
       )}
 
-      <div className="flex justify-between items-center">
-        <div className="font-medium">
-          You are: <span className="font-bold">{playerSymbol || '--'}</span>
+      <div className="bg-emerald-900/30 backdrop-blur-sm border border-emerald-800/50 rounded-xl p-4">
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center gap-2">
+            <span className="text-emerald-200">You are:</span>
+            <span className="font-bold text-lg bg-emerald-800/50 px-3 py-1 rounded-lg text-white">
+              {playerSymbol || '--'}
+            </span>
+          </div>
+          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${getStatusColor()}`}>
+            {getStatusIcon()}
+            <span className="text-sm font-medium">
+              {status.isMyTurn ? 'Your turn' : status.gameStarted ? 'Opponent\'s turn' : 'Waiting'}
+            </span>
+          </div>
         </div>
-        <div className={`text-sm px-3 py-1 rounded-full ${getStatusColor()}`}>
-          {status.isMyTurn ? 'Your turn' : status.gameStarted ? 'Opponent\'s turn' : 'Waiting'}
-        </div>
-      </div>
 
-      <div className={`p-3 rounded-lg text-center font-medium ${getStatusColor()}`}>
-        {getStatusMessage()}
+        <div className={`flex items-center justify-center gap-2 p-4 rounded-lg ${getStatusColor()}`}>
+          {getStatusIcon()}
+          <span className="font-medium">{getStatusMessage()}</span>
+        </div>
       </div>
     </div>
   );

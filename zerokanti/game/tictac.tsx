@@ -159,24 +159,9 @@ export default function TicTacToeGame() {
     setTimeout(() => setErrorMessage(''), 3000);
   };
 
-  return <div className="bg-gradient-to-r from-purple-500 to-pink-500 max-w-md mx-auto p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] overflow-hidden relative animate-fade-in">
-      {/* Decorative elements */}
-      <div className="absolute top-0 left-0 w-full h-full bg-white/10 backdrop-blur-[1px] z-0"></div>
-      <div className="absolute -top-24 -left-24 w-48 h-48 bg-yellow-300/20 rounded-full blur-3xl"></div>
-      <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-blue-300/20 rounded-full blur-3xl"></div>
-      
-      {/* Content container */}
-      <div className="relative z-10 flex flex-col items-center">
-        {/* Title with decorative elements */}
-        <div className="relative mb-8 w-full">
-          <h1 className="text-3xl font-extrabold text-white text-center tracking-wide drop-shadow-md">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-pink-100">
-              Tic Tac Tempo
-            </span>
-          </h1>
-          <div className="h-1 w-24 bg-gradient-to-r from-yellow-300 to-pink-300 rounded-full mx-auto mt-2"></div>
-        </div>
+  return <div className="bg-transparent">
 
+      <div>
         {!roomId ? (
           <GameControls
             connected={connected}
@@ -186,7 +171,7 @@ export default function TicTacToeGame() {
             onInputChange={(e) => setInputRoomId(e.target.value.toUpperCase())}
           />
         ) : (
-          <>
+          <div>
             <GameStatus
               roomId={roomId}
               playerSymbol={playerSymbol}
@@ -219,7 +204,7 @@ export default function TicTacToeGame() {
                 Play Again
               </button>
             )}
-          </>
+          </div>
         )}
 
         <ErrorMessage message={errorMessage} />

@@ -21,7 +21,7 @@ io.on('connection', (socket) => {
 
 interface Room {
     id: string;
-    players: { id: string; symbol: string }[];
+    players: { id: string; symbol: string;moves:number[] }[];
     currentTurn: string;
     board: (string | null)[];
     gameOver: boolean;
@@ -62,7 +62,7 @@ io.on("connection",(socket)=>{
         const roomId = generateRoomId();
         rooms[roomId] = {
             id: roomId,
-            players: [{ id: socket.id, symbol: 'O' }],
+            players: [{ id: socket.id, symbol: 'O',moves:[] }],
             currentTurn: socket.id,
             board: Array(9).fill(null),
             gameOver: false,
@@ -93,7 +93,7 @@ io.on("connection",(socket)=>{
             return;
           }
         else{
-            room.players.push({ id: socket.id, symbol: 'X' });
+            room.players.push({ id: socket.id, symbol: 'X',moves:[] });
             socket.join(roomId);
             callback({
                 success:true,
@@ -123,6 +123,7 @@ io.on("connection",(socket)=>{
             return;
         }
         const player = room.players.find(p=>p.id==socket.id);
+        const opponent = room.players.find(p=>p.id!==socket.id);
         if(!player){
             callback({
                 success:false,
@@ -131,6 +132,16 @@ io.on("connection",(socket)=>{
             return;
         }
         room.board[position] = player.symbol;
+        let fadePosition = null;
+        player.moves.push(position);
+        if(player.moves.length==4){
+          const position:number = player.moves[0];
+          player.moves.shift();
+          room.board[position] = null
+        }
+        if(opponent?.moves.length==3){
+          fadePosition = opponent.moves[0];
+        }
         const result = checkResult(room.board as string[]);
         if (result.winner) {
             room.gameOver = true;
@@ -180,7 +191,8 @@ io.on("connection",(socket)=>{
               board: room.board,
               position,
               symbol: player.symbol,
-              nextTurn: nextPlayer.id
+              nextTurn: nextPlayer.id,
+              fadePosition
             });
             
             callback({
