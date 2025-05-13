@@ -213,18 +213,13 @@ export default function TicTacToeGame() {
             Connecting to server...
         </div>
       )}
-      {(isLoading.creatingRoom || isLoading.joiningRoom || isLoading.restarting) && (
+      {(isLoading.creatingRoom || isLoading.joiningRoom) && (
         <div className="absolute inset-0 bg-black/10 backdrop-blur-sm z-50 flex items-center justify-center">
             <ClipLoader color="#10b981" size={30} />
         </div>
       )}
 
-      {/* Cell Loading Indicator */}
-      {isLoading.makingMove && (
-        <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-40">
-          <ClipLoader color="#10b981" size={30} />
-        </div>
-      )}
+      
 
       <div>
         {!roomId ? (
