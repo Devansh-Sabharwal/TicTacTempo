@@ -6,9 +6,9 @@ import React from 'react'
 export default function PlayCTA() {
   return (
     <div>
-      <div className="max-w-5xl mx-auto text-center mt-32">
+      <div className="max-w-5xl mx-auto p-3 text-center mt-16 mb-16">
           <div className={`transition-all duration-1000`}>
-            <h2 className="text-2xl sm:text-5xl font-bold mb-6">
+            <h2 className="text-3xl sm:text-5xl font-bold mb-6">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-300 via-teal-300 to-green-300">
                 Ready to Challenge Your Strategy?
               </span>
