@@ -63,7 +63,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   };
 
   return (
-    <div className="w-full min-h-screen max-w-2xl mx-auto p-2 sm:p-4">
+    <div className="w-full max-w-2xl mx-auto p-2 sm:p-4">
       <div 
         className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 bg-emerald-900/70 rounded-2xl p-2 sm:p-4"
         data-testid="game-board"

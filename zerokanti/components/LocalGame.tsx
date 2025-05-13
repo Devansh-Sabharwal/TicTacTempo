@@ -157,7 +157,7 @@ export function GameStatus({
 
   return (
     <div className={`
-      m-3
+      my-2
       w-full
       lg:w-72
       lg:fixed
@@ -177,7 +177,7 @@ export function GameStatus({
       items-center
       justify-between
       lg:justify-start
-      px-4 py-2
+      px-4 py-4
       lg:py-6
       z-10
     `}>
