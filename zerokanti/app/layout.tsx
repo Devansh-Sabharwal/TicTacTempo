@@ -41,7 +41,7 @@ export default function RootLayout({
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            toastClassName="!w-[380px] bg-white dark:bg-gray-800 text-gray-800 dark:text-white shadow-lg rounded-lg border-l-4 border-emerald-500"
+            toastClassName="!w-[300px] bg-white dark:bg-gray-800 text-gray-800 dark:text-white shadow-lg rounded-lg border-l-4 border-emerald-500"
           />
         <Analytics/>
 
