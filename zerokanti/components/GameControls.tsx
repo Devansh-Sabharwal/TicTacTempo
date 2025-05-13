@@ -39,7 +39,7 @@ const GameControls: React.FC<GameControlsProps> = ({
 
   return (
     <div className="relative flex min-h-screen min-w-screen justify-center items-center overflow-hidden">
-      {/* Decorative background elements */}
+      
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {decorativeIcons.map((item, index) => (
           <div 
@@ -51,7 +51,7 @@ const GameControls: React.FC<GameControlsProps> = ({
           </div>
         ))}
         
-        {/* Animated grid dots */}
+        
         <div className="absolute inset-0 grid grid-cols-12 grid-rows-12 pointer-events-none">
           {Array.from({ length: 144 }).map((_, i) => (
             <div 
