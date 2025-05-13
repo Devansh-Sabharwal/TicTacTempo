@@ -79,6 +79,7 @@ export default function LocalGame(props:LocalGameProps){
         setGameOver(false);
         setWinningLine(null);
         setLastMove(null);
+        setWinner(null);
       }
   return (
     <div className='p-5 sm:p-10 bg-gradient-to-b from-emerald-950 via-green-1000 to-emerald-950'>
@@ -99,6 +100,7 @@ export default function LocalGame(props:LocalGameProps){
         lastMove={lastMove}
         fadeIndex={fadeIndex}
         onCellClick={handleCellClick}
+        
         />
   
     </div>
