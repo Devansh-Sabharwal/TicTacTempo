@@ -34,7 +34,6 @@ const GameStatus: React.FC<GameStatusProps> = ({
 
   const getStatusMessage = () => {
     if (!status.connected) return 'Connecting to server...';
-    if (status.waitingForOpponent) return 'Waiting for opponent to join...';
     if (status.gameOver) {
       if (status.opponentLeft) return 'Opponent left the game';
       if (status.winner === playerSymbol) return 'Victory! 🎉';
@@ -54,43 +53,75 @@ const GameStatus: React.FC<GameStatusProps> = ({
   };
 
   return (
-    <div className="space-y-4 animate-fade-in">
+    <div
+      className={`
+       
+        w-full 
+        lg:w-72 
+        lg:fixed 
+        lg:left-2 
+        lg:top-2 
+        lg:bottom-auto 
+        lg:p-4 
+        lg:space-y-4 
+        bg-emerald-950/30 
+        lg:h-auto 
+        lg:rounded-2xl 
+        border border-emerald-800/50 
+        flex 
+        flex-col 
+        lg:flex-col 
+        lg:items-start 
+        items-center 
+        justify-between 
+        lg:justify-start 
+        px-4 py-2 
+        lg:py-6
+        z-10
+      `}
+    >
       {roomId && (
-        <div className="bg-emerald-900/30 backdrop-blur-sm border border-emerald-800/50 rounded-xl p-4 flex justify-between items-center">
+        <div className="bg-emerald-900/30 backdrop-blur-sm border border-emerald-800/50 rounded-xl p-3 w-full flex justify-between items-center mb-3">
           <div className="flex items-center space-x-2">
-            <span className="text-emerald-200">Room:</span>
-            <span className="font-medium text-white">{roomId}</span>
+            <span className="text-emerald-200 text-sm">Room:</span>
+            <span className="font-medium text-white text-sm">{roomId}</span>
           </div>
           <button
             onClick={onCopyRoomId}
-            className="flex items-center gap-2 px-3 py-1.5 bg-emerald-800/30 hover:bg-emerald-700/30 rounded-lg transition-colors text-emerald-300 hover:text-emerald-200"
+            className="flex items-center gap-2 px-2 py-1 bg-emerald-800/30 hover:bg-emerald-700/30 rounded-lg transition-colors text-emerald-300 hover:text-emerald-200 text-sm"
           >
             <Copy className="w-4 h-4" />
-            <span className="text-sm">Copy</span>
+            Copy
           </button>
         </div>
       )}
 
-      <div className="bg-emerald-900/30 backdrop-blur-sm border border-emerald-800/50 rounded-xl p-4">
-        <div className="flex justify-between items-center mb-4">
+      <div className="bg-emerald-900/30 backdrop-blur-sm border border-emerald-800/50 rounded-xl p-4 w-full">
+        <div className="flex justify-between items-center mb-3">
           <div className="flex items-center gap-2">
-            <span className="text-emerald-200">You are:</span>
-            <span className="font-bold text-lg bg-emerald-800/50 px-3 py-1 rounded-lg text-white">
+            <span className="text-emerald-200 text-sm">You are:</span>
+            <span className="font-bold text-lg bg-emerald-800/50 px-3 py-1 rounded-lg mr-3 text-white">
               {playerSymbol || '--'}
             </span>
           </div>
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${getStatusColor()}`}>
+          {/* <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${getStatusColor()}`}>
             {getStatusIcon()}
             <span className="text-sm font-medium">
               {status.isMyTurn ? 'Your turn' : status.gameStarted ? 'Opponent\'s turn' : 'Waiting'}
             </span>
-          </div>
+          </div> */}
         </div>
 
-        <div className={`flex items-center justify-center gap-2 p-4 rounded-lg ${getStatusColor()}`}>
+        <div className={`flex items-center justify-center gap-2 p-3 rounded-lg ${getStatusColor()}`}>
           {getStatusIcon()}
-          <span className="font-medium">{getStatusMessage()}</span>
+          <span className="font-medium text-sm">{getStatusMessage()}</span>
         </div>
+
+        {status.waitingForOpponent && (
+          <div className="mt-3 text-center text-yellow-400 text-sm bg-yellow-500/10 px-3 py-2 rounded-lg">
+            Waiting for opponent to join...
+          </div>
+        )}
       </div>
     </div>
   );

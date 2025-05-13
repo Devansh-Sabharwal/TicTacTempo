@@ -16,8 +16,10 @@ export default function Navbar() {
                       <Link href={"#how-to-play"}>How to Play</Link></span>
                     <span className="text-bold cursor-pointer bg-clip-text text-transparent bg-gradient-to-r from-emerald-200 to-green-200 text-xs sm:text-xl">
                       <Link href={"#rules"}>Rules</Link></span>
+                      <Link href={"/game"}>
                     <span className="text-semibold text-xs sm:text-lg bg-gradient-to-r from-emerald-500 to-green-600 cursor-pointer hover:bg-green-900 rounded-lg px-2 py-1 sm:px-4 sm:py-2">
-                      <Link href={"/mode"}>Play Now</Link></span>
+                      Play Now</span>
+                      </Link>
                 </div>
             </div>
         </div>

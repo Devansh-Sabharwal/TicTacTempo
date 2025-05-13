@@ -18,16 +18,20 @@ export default function PlayCTA() {
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link href={"/game"}>
               <button 
                 onClick={() => {}}
                 className="group relative px-4 py-2 sm:px-8 sm:py-4 bg-gradient-to-r from-emerald-500 to-green-600 rounded-xl text-white font-semibold text-base sm:text-lg shadow-lg hover:shadow-emerald-500/20 transition-all transform hover:scale-105 sm:w-auto"
               >
+                
                 <span className="flex items-center justify-center">
                   <Gamepad2 size={24} className="mr-2" />
-                  <Link href={"/mode"}>Play Now</Link>
+                  Play Now
                   <Sparkles size={20} className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </span>
+                
               </button>
+              </Link>
               </div>
               </div>
               </div>

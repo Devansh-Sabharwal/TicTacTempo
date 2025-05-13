@@ -1,15 +1,16 @@
 // components/TicTacToeGame.tsx
 'use client';
-
+import { toast } from 'react-toastify';
 import { useState, useEffect, useRef } from 'react';
+import { ClipLoader } from 'react-spinners';
 import Game from './game';
 import Board from '@/components/Board';
 import GameControls from '@/components/GameControls';
 import GameStatus from '@/components/GameStatus';
-import ErrorMessage from '@/components/ErrorMessage';
 
 export default function TicTacToeGame() {
   const [game, setGame] = useState<Game | null>(null);
+  const [showOverlay, setShowOverlay] = useState(true);
   const [connected, setConnected] = useState(false);
   const [roomId, setRoomId] = useState('');
   const [inputRoomId, setInputRoomId] = useState('');
@@ -24,8 +25,14 @@ export default function TicTacToeGame() {
   const [opponentLeft, setOpponentLeft] = useState(false);
   const [lastMove, setLastMove] = useState<number | null>(null);
   const [fadeIndex, setFadeIndex] = useState<number | null>(null);
-  const [errorMessage, setErrorMessage] = useState('');
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
+  const [isLoading, setIsLoading] = useState({
+    connecting: false,
+    creatingRoom: false,
+    joiningRoom: false,
+    makingMove: false,
+    restarting: false
+  });
   
   const gameInstance = useRef<Game | null>(null);
 
@@ -34,13 +41,17 @@ export default function TicTacToeGame() {
     setGame(gameInstance.current);
 
     const initGame = async () => {
+      setIsLoading(prev => ({...prev, connecting: true}));
       try {
         await gameInstance.current?.connect();
         setConnected(true);
         setupGameEventHandlers(gameInstance.current);
+        toast.success('Connected to game server');
       } catch (error) {
         console.error('Failed to connect:', error);
-        setErrorMessage('Failed to connect to server. Please try again.');
+        toast.error('Failed to connect to server. Please try again.');
+      } finally {
+        setIsLoading(prev => ({...prev, connecting: false}));
       }
     };
 
@@ -59,6 +70,7 @@ export default function TicTacToeGame() {
       setLastMove(data.lastMove);
       setIsMyTurn(data.isMyTurn);
       setFadeIndex(data.fadeIndex);
+      setIsLoading(prev => ({...prev, makingMove: false}));
     };
 
     gameObj.onGameStart = (data) => {
@@ -71,6 +83,11 @@ export default function TicTacToeGame() {
       setWinningLine(null);
       setIsDraw(false);
       setOpponentLeft(false);
+      setIsLoading(prev => ({
+        ...prev, 
+        creatingRoom: false,
+        joiningRoom: false
+      }));
     };
 
     gameObj.onGameOver = (data) => {
@@ -80,86 +97,134 @@ export default function TicTacToeGame() {
       setWinningLine(data.winningLine);
       setIsDraw(data.draw);
       setOpponentLeft(data.opponentLeft);
+      
+      if (data.draw) {
+        toast.info('Game ended in a draw!');
+      } else if (data.winner) {
+        toast.success(`${data.winner} wins!`);
+      } else if (data.opponentLeft) {
+        toast.warning('Opponent left the game');
+      }
     };
 
     gameObj.onPlayerJoin = () => {
       setWaitingForOpponent(false);
+      toast.success('Opponent joined the game!');
     };
 
     gameObj.onPlayerLeave = () => {
       setOpponentLeft(true);
       setGameOver(true);
+      toast.warning('Opponent left the game');
     };
 
     gameObj.onError = (message) => {
-      setErrorMessage(message);
-      setTimeout(() => setErrorMessage(''), 3000);
+      toast.error(message);
+      setIsLoading({
+        connecting: false,
+        creatingRoom: false,
+        joiningRoom: false,
+        makingMove: false,
+        restarting: false
+      });
     };
   };
 
   const handleCellClick = async (index: number) => {
-    if (!gameStarted || gameOver || !isMyTurn || board[index] !== null) return;
+    if (!gameStarted || gameOver || !isMyTurn || board[index] !== null) {
+      if (board[index] !== null) {
+        toast.warning('This cell is already taken');
+      }
+      return;
+    }
 
+    setIsLoading(prev => ({...prev, makingMove: true}));
     try {
       await gameInstance.current?.makeMove(index);
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'An error occurred');
-      setTimeout(() => setErrorMessage(''), 3000);
+      toast.error(error instanceof Error ? error.message : 'An error occurred');
+      setIsLoading(prev => ({...prev, makingMove: false}));
     }
   };
 
   const handleCreateRoom = async () => {
+    setIsLoading(prev => ({...prev, creatingRoom: true}));
     try {
       const response:any = await gameInstance.current?.createRoom();
       if (response) {
         setRoomId(response.roomId || '');
         setPlayerSymbol(response.symbol || null);
         setWaitingForOpponent(true);
+        toast.success(`Room created! ID: ${response.roomId}`);
       }
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Failed to create room');
-      setTimeout(() => setErrorMessage(''), 3000);
+      toast.error(error instanceof Error ? error.message : 'Failed to create room');
+    } finally {
+      setIsLoading(prev => ({...prev, creatingRoom: false}));
     }
   };
 
   const handleJoinRoom = async () => {
     if (!inputRoomId) {
-      setErrorMessage('Please enter a room ID');
-      setTimeout(() => setErrorMessage(''), 3000);
+      toast.warning('Please enter a room ID');
       return;
     }
 
+    setIsLoading(prev => ({...prev, joiningRoom: true}));
     try {
       const response:any = await gameInstance.current?.joinRoom(inputRoomId);
       if (response) {
         setRoomId(response.roomId || '');
         setPlayerSymbol(response.symbol || null);
+        toast.success(`Joined room ${response.roomId}`);
       }
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Failed to join room');
-      setTimeout(() => setErrorMessage(''), 3000);
+      toast.error(error instanceof Error ? error.message : 'Failed to join room');
+    } finally {
+      setIsLoading(prev => ({...prev, joiningRoom: false}));
     }
   };
 
   const handleRestartGame = async () => {
+    setIsLoading(prev => ({...prev, restarting: true}));
     try {
       if(!gameInstance.current) return;
-      console.log("button clicked",gameInstance.current.restartGame);
       await gameInstance.current?.restartGame();
-      console.log("after",gameInstance.current)
+      toast.info('Game restarted!');
+      setShowOverlay(false);
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'Failed to restart game');
-      setTimeout(() => setErrorMessage(''), 3000);
+      toast.error(error instanceof Error ? error.message : 'Failed to restart game');
+    } finally {
+      setIsLoading(prev => ({...prev, restarting: false}));
     }
   };
 
   const copyRoomIdToClipboard = () => {
     navigator.clipboard.writeText(roomId);
-    setErrorMessage('Room ID copied to clipboard!');
-    setTimeout(() => setErrorMessage(''), 3000);
+    toast.success('Room ID copied to clipboard!');
   };
 
-  return <div className="bg-transparent">
+  return (
+    <div className="bg-transparent relative">
+      {/* Global Loading Overlay */}
+      {(isLoading.connecting || isLoading.creatingRoom || isLoading.joiningRoom || isLoading.restarting) && (
+        <div className=" bg-black/10 backdrop-blur-sm z-50 flex items-center justify-center">
+            <ClipLoader color="#10b981" size={30} className='m-3'/>
+            Connecting to server...
+        </div>
+      )}
+      {(isLoading.creatingRoom || isLoading.joiningRoom || isLoading.restarting) && (
+        <div className="absolute inset-0 bg-black/10 backdrop-blur-sm z-50 flex items-center justify-center">
+            <ClipLoader color="#10b981" size={30} />
+        </div>
+      )}
+
+      {/* Cell Loading Indicator */}
+      {isLoading.makingMove && (
+        <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-40">
+          <ClipLoader color="#10b981" size={30} />
+        </div>
+      )}
 
       <div>
         {!roomId ? (
@@ -169,9 +234,10 @@ export default function TicTacToeGame() {
             onCreateRoom={handleCreateRoom}
             onJoinRoom={handleJoinRoom}
             onInputChange={(e) => setInputRoomId(e.target.value.toUpperCase())}
+            isLoading={isLoading.creatingRoom || isLoading.joiningRoom}
           />
         ) : (
-          <div>
+          <div className='p-4'>
             <GameStatus
               roomId={roomId}
               playerSymbol={playerSymbol}
@@ -194,20 +260,44 @@ export default function TicTacToeGame() {
               lastMove={lastMove}
               fadeIndex={fadeIndex}
               onCellClick={handleCellClick}
+              disabled={isLoading.makingMove}
             />
-
-            {gameOver && (
-              <button
-                onClick={handleRestartGame}
-                className="w-full mt-6 bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
-              >
-                Play Again
-              </button>
-            )}
           </div>
         )}
 
-        <ErrorMessage message={errorMessage} />
+        {gameOver && showOverlay && (
+          <div className="absolute inset-0 flex items-center justify-center backdrop-blur-xs z-50">
+            <div className="relative bg-transparent p-6 rounded-2xl shadow-xl border border-white/10 backdrop-blur-md">
+              <button
+                onClick={() => setShowOverlay(false)}
+                className="absolute top-2 right-2 text-white hover:text-green-50 transition-colors text-xl font-bold"
+                aria-label="Close"
+              >
+                ✖
+              </button>
+
+              <button
+                onClick={handleRestartGame}
+                disabled={isLoading.restarting}
+                className="px-8 py-4 rounded-2xl 
+                  bg-gradient-to-r from-emerald-500 to-green-600 
+                  text-white text-lg font-semibold shadow-lg 
+                  hover:from-emerald-400 hover:to-green-500
+                  hover:shadow-emerald-500/20 hover:scale-105
+                  active:scale-95
+                  transition-all duration-300
+                  disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isLoading.restarting ? (
+                  <ClipLoader color="#ffffff" size={20} />
+                ) : (
+                  'Play Again'
+                )}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
+  );
 }

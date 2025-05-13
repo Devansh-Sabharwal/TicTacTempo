@@ -58,7 +58,7 @@ export default class Game {
                 res(this.socket?.id);
             })
             this.socket.on('connect_error', (error) => {
-                console.error('Connection error:', error);
+                console.log('Connection error:', error);
                 rej(error);
               });
             });
@@ -171,7 +171,7 @@ export default class Game {
           console.log(`Room created: ${this.roomId}, You are: ${this.playerSymbol}`);
           resolve(response);
         } else {
-          console.error('Failed to create room:', response.message);
+          console.log('Failed to create room:', response.message);
           reject(new Error(response.message));
         }
       });
@@ -190,7 +190,7 @@ export default class Game {
                 console.log(`Joined room: ${this.roomId}, You are: ${this.playerSymbol}`);
                 resolve(response);
               } else {
-                console.error('Failed to join room:', response.message);
+                console.log('Failed to join room:', response.message);
                 reject(new Error(response.message));
               }
         })
@@ -235,7 +235,7 @@ export default class Game {
           // Server will broadcast the updated state, so we don't update local state here
           res(response);
         } else {
-          console.error('Failed to make move:', response.message);
+          console.log('Failed to make move:', response.message);
           reject(new Error(response.message));
           
           if (this.onError) {
@@ -269,7 +269,7 @@ export default class Game {
           console.log("restart called ")
           resolve(response);
         } else {
-          console.error('Failed to restart game:', response.message);
+          console.log('Failed to restart game:', response.message);
           reject(new Error(response.message));
           
           if (this.onError) {

@@ -1,4 +1,3 @@
-// components/GameBoard.tsx
 import React from 'react';
 
 interface GameBoardProps {
@@ -25,13 +24,13 @@ const GameBoard: React.FC<GameBoardProps> = ({
     
     let classes = [
       'bg-emerald-800/40',
-      'm-1.5 border border-emerald-300/20',
-      'h-32 w-32', // Size
-      'flex items-center justify-center', // Layout
-      'text-5xl font-bold', // Text
+      'border border-emerald-300/20',
+      'aspect-square w-full', // Responsive sizing
+      'flex items-center justify-center',
+      'text-3xl sm:text-4xl md:text-5xl font-bold', // Responsive text
       'rounded-xl',
-      'transition-all duration-200', // Animation
-      'cursor-pointer', // Interaction
+      'transition-all duration-200',
+      'cursor-pointer',
       animationClass
     ];
 
@@ -42,44 +41,46 @@ const GameBoard: React.FC<GameBoardProps> = ({
     if (winningLine?.includes(index)) {
       classes.push('bg-emerald-500/60 shadow-md animate-winning-pulse');
     } else if (lastMove === index) {
-      classes.push('bg-blue-50 border-blue-300');
+      classes.push('bg-emerald-700/60 border-emerald-500/50');
     }
 
     return classes.join(' ');
   };
 
-  const getSymbolClasses = (symbol: string | null,index:number) => {
+  const getSymbolClasses = (symbol: string | null, index: number) => {
     const isFade = index === fadeIndex;
     const value = board[index];
     const textColor = value === 'O'
-    ? isFade
-      ? 'text-teal-200/15'    
-      : 'text-teal-300'      
-    : value === 'X'
       ? isFade
-        ? 'text-green-200/30'    
-        : 'text-green-300'       
-      : '';
+        ? 'text-teal-200/15'    
+        : 'text-teal-300'      
+      : value === 'X'
+        ? isFade
+          ? 'text-green-200/30'    
+          : 'text-green-300'       
+        : '';
     return textColor;
   };
 
   return (
-    <div 
-      className="grid grid-cols-3  bg-emerald-900/70 rounded-2xl sm:p-4"
-      data-testid="game-board"
-    >
-      {board.map((cell, index) => (
-        <div
-          key={index}
-          className={getCellClasses(index)}
-          onClick={() => !disabled && onCellClick(index)}
-          aria-label={`Cell ${index} ${cell ? `containing ${cell}` : 'empty'}`}
-        >
-          <span className={getSymbolClasses(cell,index)}>
-            {cell}
-          </span>
-        </div>
-      ))}
+    <div className="w-full min-h-screen max-w-2xl mx-auto p-2 sm:p-4">
+      <div 
+        className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 bg-emerald-900/70 rounded-2xl p-2 sm:p-4"
+        data-testid="game-board"
+      >
+        {board.map((cell, index) => (
+          <div
+            key={index}
+            className={getCellClasses(index)}
+            onClick={() => !disabled && onCellClick(index)}
+            aria-label={`Cell ${index} ${cell ? `containing ${cell}` : 'empty'}`}
+          >
+            <span className={getSymbolClasses(cell, index)}>
+              {cell}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
