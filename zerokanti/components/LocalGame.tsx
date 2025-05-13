@@ -81,7 +81,7 @@ export default function LocalGame(props:LocalGameProps){
         setLastMove(null);
       }
   return (
-    <div className='p-5 sm:p-10'>
+    <div className='p-5 sm:p-10 bg-gradient-to-b from-emerald-950 via-green-1000 to-emerald-950'>
       <GameStatus 
             player1={props.player1} 
             player1Symbol={props.player1Symbol}

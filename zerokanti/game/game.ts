@@ -1,6 +1,6 @@
 
 import { io, Socket } from 'socket.io-client';
-
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 export default class Game {
     public socket:Socket|null;
     public roomId:string|null;
@@ -21,7 +21,6 @@ export default class Game {
     public onPlayerJoin:((data:any)=>void)|null;
     public onPlayerLeave:((data:any)=>void)|null;
     public onError:((message: string) => void)|null;
-
   constructor() {
     // Socket connection
     this.socket = null;
@@ -47,7 +46,7 @@ export default class Game {
     this.onPlayerLeave = null;
     this.onError = null;
   }
-  async connect(serverUrl = 'http://localhost:3001'){
+  async connect(serverUrl = apiUrl){
     try{
         this.socket = io(serverUrl);
         return await new Promise((res,rej)=>{
