@@ -1,8 +1,7 @@
 "use client"
 
 import React, { useState } from 'react';
-import { Gamepad2, Users, MonitorPlay } from 'lucide-react';
-import LocalGame from './LocalGame';
+import { Gamepad2, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 interface GameControlsProps {
   connected: boolean;

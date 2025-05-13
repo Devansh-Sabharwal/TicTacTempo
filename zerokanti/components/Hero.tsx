@@ -1,4 +1,4 @@
-import { Play, Users } from "lucide-react"
+import { Play } from "lucide-react"
 import GamePreview from "./GamePreview"
 import Link from "next/link"
 

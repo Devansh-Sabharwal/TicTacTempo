@@ -106,7 +106,7 @@ export default function LocalGame(props:LocalGameProps){
 }
 
 
-import { Trophy, User, Clock, Circle, X, Copy, RefreshCw } from "lucide-react";
+import { Trophy, User, Clock, Circle, X, RefreshCw } from "lucide-react";
 
 interface GameStatusProps {
   player1: string;

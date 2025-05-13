@@ -3,8 +3,6 @@ import HowToPlay from "@/components/HowToPlay";
 import Navbar from "@/components/Navbar";
 import PlayCTA from "@/components/PlayCTA";
 import Rules from "@/components/Rules";
-import TicTacToeGame from "@/game/tictac";
-import Image from "next/image";
 
 export default function Home() {
   return (

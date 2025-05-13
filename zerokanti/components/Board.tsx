@@ -22,7 +22,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
     const value = board[index];
     const animationClass = value && !isFade ? 'animate-cell-appear' : '';
     
-    let classes = [
+    const classes = [
       'bg-emerald-800/40',
       'border border-emerald-300/20',
       'aspect-square w-full', // Responsive sizing

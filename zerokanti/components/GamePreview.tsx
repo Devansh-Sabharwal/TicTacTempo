@@ -10,7 +10,7 @@ export default function GamePreview() {
 }
 
 
-function Cell({ index,board,fadeIndex,winningLine }: { index: number,board:any[],fadeIndex:number,winningLine:number[]|null }) {
+function Cell({ index,board,fadeIndex,winningLine }: { index: number,board:(string|null)[],fadeIndex:number,winningLine:number[]|null }) {
   const value = board[index];
   const isFade = index === fadeIndex;
   const isWinning = winningLine?.includes(index);
